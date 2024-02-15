@@ -1,4 +1,13 @@
-set(src main.cpp)
+set(src main.cpp
+        smtp_protocol/data_init_state.cpp
+        smtp_protocol/end_state.cpp
+        smtp_protocol/error_state.cpp
+        smtp_protocol/fill_data_state.cpp
+        smtp_protocol/helo_state.cpp
+        smtp_protocol/mail_from_state.cpp
+        smtp_protocol/quit_state.cpp
+        smtp_protocol/rcpt_to_state.cpp
+)
 
 include_directories(/usr/local/include/)
 
