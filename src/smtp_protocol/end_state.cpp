@@ -1,4 +1,5 @@
 #include "end_state.h"
 
-void EndState::handleMessage(const std::string &message) {
+std::unique_ptr<SmtpState> EndState::handleMessage(const std::string &message) {
+    return nullptr;
 }

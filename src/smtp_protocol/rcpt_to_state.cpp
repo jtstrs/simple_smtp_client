@@ -1,4 +1,5 @@
 #include "rcpt_to_state.h"
 
-void RcptToState::handleMessage(const std::string &message) {
+std::unique_ptr<SmtpState> RcptToState::handleMessage(const std::string &message) {
+    return nullptr;
 }

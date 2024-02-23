@@ -1,4 +1,5 @@
 #include "error_state.h"
 
-void ErrorState::handleMessage(const std::string &message) {
+std::unique_ptr<SmtpState> ErrorState::handleMessage(const std::string &message) {
+    return nullptr;
 }

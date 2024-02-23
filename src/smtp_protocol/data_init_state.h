@@ -5,7 +5,7 @@
 
 class DataInitState : public SmtpState {
 public:
-    void handleMessage(const std::string &message) override;
+    std::unique_ptr<SmtpState> handleMessage(const std::string &message) override;
 };
 
 #endif

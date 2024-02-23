@@ -1,4 +1,5 @@
 #include "helo_state.h"
 
-void HeloState::handleMessage(const std::string &message) {
+std::unique_ptr<SmtpState> HeloState::handleMessage(const std::string &message) {
+    return nullptr;
 }

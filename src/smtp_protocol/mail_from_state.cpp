@@ -1,4 +1,5 @@
 #include "mail_from_state.h"
 
-void MailFromState::handleMessage(const std::string &message) {
+std::unique_ptr<SmtpState> MailFromState::handleMessage(const std::string &message) {
+    return nullptr;
 }

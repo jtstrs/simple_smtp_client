@@ -1,4 +1,5 @@
 #include "data_init_state.h"
 
-void DataInitState::handleMessage(const std::string &message) {
+std::unique_ptr<SmtpState> DataInitState::handleMessage(const std::string &message) {
+    return nullptr;
 }
