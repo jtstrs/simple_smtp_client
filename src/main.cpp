@@ -1,28 +1,43 @@
 #include <Poco/Net/DNS.h>
 #include <Poco/Net/HostEntry.h>
 #include <Poco/Net/IPAddress.h>
+#include <cstdint>
 #include <iostream>
 
-using Poco::Net::DNS;
-using Poco::Net::HostEntry;
-using Poco::Net::IPAddress;
+#include <Poco/Net/SocketAddress.h>
+#include <Poco/Net/StreamSocket.h>
 
 int32_t main(int32_t argc, char *argv[]) {
-    const HostEntry &entry = DNS::hostByName("www.google.com");
-    std::cout << "Canonical name: " << entry.name() << std::endl;
-
-    const HostEntry::AliasList &aliases = entry.aliases();
-    HostEntry::AliasList::const_iterator alias_it = aliases.begin();
-
-    for (; alias_it != aliases.end(); ++alias_it) {
-        std::cout << "Alias: " << *alias_it << std::endl;
+    if (argc < 2) {
+        std::cout << "Too low arguments count" << std::endl;
+        return 0;
     }
 
-    const HostEntry::AddressList &addrs = entry.addresses();
-    HostEntry::AddressList::const_iterator addr_it = addrs.begin();
-    for (; addr_it != addrs.end(); ++addr_it) {
-        std::cout << "Address: " << addr_it->toString() << std::endl;
+    std::cout << "Resolving: " << argv[1] << std::endl;
+
+    const Poco::Net::HostEntry &entry = Poco::Net::DNS::hostByName(argv[1]);
+    const Poco::Net::HostEntry::AddressList &addresses = entry.addresses();
+
+    Poco::Net::IPAddress ipv4Address;
+    for (auto address : addresses) {
+        std::cout << address.toString() << std::endl;
+        if (address.isIPv4Mapped()) {
+            ipv4Address = address;
+        }
     }
+
+    // Port for establishing tls connection
+    const uint16_t smtpPort = 5555;
+
+    Poco::Net::SocketAddress socketAddress(ipv4Address, smtpPort);
+
+    std::cout << "Trying connect to address: " << socketAddress.toString() << std::endl;
+
+    Poco::Net::StreamSocket socket(socketAddress);
+
+    constexpr int32_t bufferSize = 256;
+    char messageBuffer[bufferSize];
+    memset(messageBuffer, 0, bufferSize);
 
     return 0;
 }
