@@ -1,5 +1,5 @@
 #include "quit_state.h"
 
-std::unique_ptr<SmtpState> QuitState::handleMessage(const std::string &message) {
+std::unique_ptr<SmtpState> QuitState::handleTransition(Poco::Net::StreamSocket &socket) {
     return nullptr;
 }

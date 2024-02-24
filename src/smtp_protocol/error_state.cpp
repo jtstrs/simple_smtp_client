@@ -1,5 +1,5 @@
 #include "error_state.h"
 
-std::unique_ptr<SmtpState> ErrorState::handleMessage(const std::string &message) {
+std::unique_ptr<SmtpState> ErrorState::handleTransition(Poco::Net::StreamSocket &socket) {
     return nullptr;
 }

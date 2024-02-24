@@ -1,5 +1,5 @@
 #include "helo_state.h"
 
-std::unique_ptr<SmtpState> HeloState::handleMessage(const std::string &message) {
+std::unique_ptr<SmtpState> HeloState::handleTransition(Poco::Net::StreamSocket &socket) {
     return nullptr;
 }

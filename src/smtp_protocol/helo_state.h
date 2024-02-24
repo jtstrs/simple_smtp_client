@@ -5,7 +5,7 @@
 
 class HeloState : public SmtpState {
 public:
-    std::unique_ptr<SmtpState> handleMessage(const std::string &message) override;
+    std::unique_ptr<SmtpState> handleTransition(Poco::Net::StreamSocket &socket) override;
 };
 
 #endif

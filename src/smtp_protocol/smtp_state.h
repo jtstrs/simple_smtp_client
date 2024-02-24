@@ -1,12 +1,12 @@
 #ifndef SMTP_STATE
 #define SMTP_STATE
 
+#include <Poco/Net/SocketStream.h>
 #include <memory>
-#include <string>
 
 class SmtpState {
 public:
-    virtual std::unique_ptr<SmtpState> handleMessage(const std::string &message) = 0;
+    virtual std::unique_ptr<SmtpState> handleTransition(Poco::Net::StreamSocket &socket) = 0;
 };
 
 #endif

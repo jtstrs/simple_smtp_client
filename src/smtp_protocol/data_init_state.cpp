@@ -1,5 +1,5 @@
 #include "data_init_state.h"
 
-std::unique_ptr<SmtpState> DataInitState::handleMessage(const std::string &message) {
+std::unique_ptr<SmtpState> DataInitState::handleTransition(Poco::Net::StreamSocket &socket) {
     return nullptr;
 }
