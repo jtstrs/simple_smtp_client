@@ -1,4 +1,5 @@
 set(src main.cpp
+        message.cpp
         smtp_protocol/data_init_state.cpp
         smtp_protocol/end_state.cpp
         smtp_protocol/error_state.cpp
@@ -8,6 +9,11 @@ set(src main.cpp
         smtp_protocol/quit_state.cpp
         smtp_protocol/rcpt_to_state.cpp
 )
+
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_BUILD_TYPE Debug)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++20")
 
 include_directories(/usr/local/include/)
 

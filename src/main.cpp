@@ -1,43 +1,35 @@
-#include <Poco/Net/DNS.h>
-#include <Poco/Net/HostEntry.h>
-#include <Poco/Net/IPAddress.h>
-#include <cstdint>
+#include "message.h"
+#include <format>
+#include <fstream>
 #include <iostream>
+#include <stdexcept>
 
-#include <Poco/Net/SocketAddress.h>
-#include <Poco/Net/StreamSocket.h>
+#define TEST_ENABLE
+
+void test_parse_message() {
+    const std::string test_message_path = "../../resources/test_message";
+
+    std::fstream message_source(test_message_path, std::ios_base::in);
+
+    if (!message_source.is_open()) {
+        throw std::runtime_error("Couldnt open file with test message");
+    }
+
+    std::cout << "Parse message from source" << std::endl;
+
+    Message message = Message::parse_message(message_source);
+
+    std::cout << std::format("From: {}\nTo: {}\nSubject: {}\nBody: {}\n",
+                             message.from,
+                             message.to,
+                             message.subject,
+                             message.body);
+}
 
 int32_t main(int32_t argc, char *argv[]) {
-    if (argc < 2) {
-        std::cout << "Too low arguments count" << std::endl;
-        return 0;
-    }
-
-    std::cout << "Resolving: " << argv[1] << std::endl;
-
-    const Poco::Net::HostEntry &entry = Poco::Net::DNS::hostByName(argv[1]);
-    const Poco::Net::HostEntry::AddressList &addresses = entry.addresses();
-
-    Poco::Net::IPAddress ipv4Address;
-    for (auto address : addresses) {
-        std::cout << address.toString() << std::endl;
-        if (address.isIPv4Mapped()) {
-            ipv4Address = address;
-        }
-    }
-
-    // Port for establishing tls connection
-    const uint16_t smtpPort = 5555;
-
-    Poco::Net::SocketAddress socketAddress(ipv4Address, smtpPort);
-
-    std::cout << "Trying connect to address: " << socketAddress.toString() << std::endl;
-
-    Poco::Net::StreamSocket socket(socketAddress);
-
-    constexpr int32_t bufferSize = 256;
-    char messageBuffer[bufferSize];
-    memset(messageBuffer, 0, bufferSize);
+#ifdef TEST_ENABLE
+    test_parse_message();
+#endif
 
     return 0;
 }
