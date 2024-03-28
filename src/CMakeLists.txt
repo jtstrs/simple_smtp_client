@@ -1,5 +1,6 @@
 set(src main.cpp
         message.cpp
+        smtp_client_application.cpp
         smtp_protocol/data_init_state.cpp
         smtp_protocol/end_state.cpp
         smtp_protocol/error_state.cpp
@@ -19,7 +20,8 @@ include_directories(/usr/local/include/)
 
 find_library(POCO_NET PocoNet HINTS /usr/local/lib/PocoNet)
 find_library(POCO_FOUNDATION PocoFoundation HINTS /usr/local/lib/PocoFoundation)
+find_library(POCO_UTILS PocoUtil HINTS /usr/local/lib/PocoUtil)
 
 add_executable(${PROJECT_NAME} ${src})
 
-target_link_libraries(${PROJECT_NAME} ${POCO_FOUNDATION} ${POCO_NET})
+target_link_libraries(${PROJECT_NAME} ${POCO_FOUNDATION} ${POCO_NET} ${POCO_UTILS})

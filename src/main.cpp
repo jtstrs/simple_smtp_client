@@ -1,4 +1,5 @@
 #include "message.h"
+#include "smtp_client_application.h"
 #include <format>
 #include <fstream>
 #include <iostream>
@@ -30,6 +31,6 @@ int32_t main(int32_t argc, char *argv[]) {
 #ifdef TEST_ENABLE
     test_parse_message();
 #endif
-
-    return 0;
+    SmtpClientApplication app;
+    return app.run();
 }
