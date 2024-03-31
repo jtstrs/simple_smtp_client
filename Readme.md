@@ -28,3 +28,9 @@ services, since without that, probably most
 mail services will reject incoming messages;
 - Application should support gmail authorization;
 - Application should implement SMTP protocol;
+
+# CLI Arguments
+
+There is a list of CLI arguments, which supported by an application:
+- [-h --host]: information about target host 
+- [-p, --port]: information about port (TODO by default)
