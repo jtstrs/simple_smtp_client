@@ -5,8 +5,6 @@
 #include <iostream>
 #include <stdexcept>
 
-#define TEST_ENABLE
-
 void test_parse_message() {
     const std::string test_message_path = "../../resources/test_message";
 
