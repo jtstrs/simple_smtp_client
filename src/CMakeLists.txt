@@ -16,12 +16,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++20")
 
-include_directories(/usr/local/include/)
+find_package(Poco REQUIRED COMPONENTS Net Foundation Util)
 
-find_library(POCO_NET PocoNet HINTS /usr/local/lib/PocoNet)
-find_library(POCO_FOUNDATION PocoFoundation HINTS /usr/local/lib/PocoFoundation)
-find_library(POCO_UTILS PocoUtil HINTS /usr/local/lib/PocoUtil)
+include_directories(Poco::Net Poco::Foundation Poco::Util)
 
 add_executable(${PROJECT_NAME} ${src})
 
-target_link_libraries(${PROJECT_NAME} ${POCO_FOUNDATION} ${POCO_NET} ${POCO_UTILS})
+target_link_libraries(${PROJECT_NAME} Poco::Net Poco::Foundation Poco::Util)
