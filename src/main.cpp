@@ -30,5 +30,6 @@ int32_t main(int32_t argc, char *argv[]) {
     test_parse_message();
 #endif
     SmtpClientApplication app;
+    app.init(argc, argv);
     return app.run();
 }
