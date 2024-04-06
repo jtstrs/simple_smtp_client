@@ -3,6 +3,7 @@
 #include <Poco/Util/HelpFormatter.h>
 #include <Poco/Util/OptionCallback.h>
 #include <Poco/Util/OptionSet.h>
+#include <iostream>
 
 void SmtpClientApplication::initialize(Poco::Util::Application &self) {
     Poco::Util::Application::initialize(self);
