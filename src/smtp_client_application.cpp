@@ -31,6 +31,12 @@ void SmtpClientApplication::defineOptions(Poco::Util::OptionSet &options) {
                     .required(false)
                     .repeatable(false)
                     .callback(Poco::Util::OptionCallback<SmtpClientApplication>(this, &SmtpClientApplication::handleCliOption)));
+
+    options.addOption(
+            Poco::Util::Option("port", "p", "Remote host port")
+                    .required(false)
+                    .repeatable(false)
+                    .callback(Poco::Util::OptionCallback<SmtpClientApplication>(this, &SmtpClientApplication::handleCliOption)));
 }
 
 void SmtpClientApplication::handleHelp(const std::string &name, const std::string &value) {
