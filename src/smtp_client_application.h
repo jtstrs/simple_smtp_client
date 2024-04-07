@@ -3,8 +3,6 @@
 
 #include "Poco/Util/Application.h"
 #include <Poco/Util/OptionSet.h>
-#include <iostream>
-#include <type_traits>
 
 class SmtpClientApplication : public Poco::Util::Application {
 public:
