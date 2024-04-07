@@ -3,6 +3,6 @@
 
 #include <cstdint>
 
-constexpr int32_t inputBufferSize = 2048;
+constexpr int32_t INPUT_BUFFER_SIZE = 2048;
 
 #endif

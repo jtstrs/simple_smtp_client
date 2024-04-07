@@ -2,6 +2,7 @@ set(src main.cpp
         message.cpp
         smtp_client.cpp
         smtp_client_application.cpp
+        responses_parser.cpp
         smtp_protocol/data_init_state.cpp
         smtp_protocol/end_state.cpp
         smtp_protocol/error_state.cpp
