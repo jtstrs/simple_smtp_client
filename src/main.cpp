@@ -5,12 +5,15 @@
 #include <iostream>
 #include <stdexcept>
 
-#if 0
-void test_parse_message() {
-    const std::string test_message_path = "../../resources/test_message";
+#define WITH_TEST_MESSAGE
 
+#ifdef WITH_TEST_MESSAGE
+constexpr char const *test_message_path = "../../resources/test_message";
+#endif
+
+int32_t main(int32_t argc, char *argv[]) {
+#ifdef WITH_TEST_MESSAGE
     std::fstream message_source(test_message_path, std::ios_base::in);
-
     if (!message_source.is_open()) {
         throw std::runtime_error("Couldnt open file with test message");
     }
@@ -24,11 +27,11 @@ void test_parse_message() {
                              message.to,
                              message.subject,
                              message.body);
-}
+#else
+    Message message;
 #endif
 
-int32_t main(int32_t argc, char *argv[]) {
-    SmtpClientApplication app;
+    SmtpClientApplication app(message);
     app.init(argc, argv);
     return app.run();
 }

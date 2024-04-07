@@ -1,15 +1,21 @@
 #include "smtp_client_application.h"
+#include "smtp_client.h"
 #include <Poco/Util/Application.h>
 #include <Poco/Util/HelpFormatter.h>
 #include <Poco/Util/OptionCallback.h>
 #include <Poco/Util/OptionSet.h>
 #include <charconv>
-#include <ios>
 #include <iostream>
+#include <memory>
 
 
 constexpr char const *g_addr = "addr";
 constexpr char const *g_port = "port";
+
+SmtpClientApplication::SmtpClientApplication(const Message &message) : bindedMessage(message),
+                                                                       client(nullptr) {
+}
+
 
 void SmtpClientApplication::initialize(Poco::Util::Application &self) {
     Poco::Util::Application::initialize(self);
@@ -20,10 +26,11 @@ void SmtpClientApplication::uninitialize() {
 }
 
 int32_t SmtpClientApplication::main(const std::vector<std::string> &args) {
-    std::cout << std::boolalpha << "Port is provided: " << config().hasOption("port") << std::endl;
-    std::cout << std::boolalpha << "Host is provided: " << config().hasOption("addr") << std::endl;
+    const std::string address = "localhost";
+    int32_t port = 5555;
 
-    std::cout << config().getInt32("port") << std::endl;
+    client = std::make_unique<SmtpClient>(address, port);
+    client->sendMessage(bindedMessage);
     return 0;
 }
 

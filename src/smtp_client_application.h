@@ -2,10 +2,14 @@
 #define APPLICATION_H
 
 #include "Poco/Util/Application.h"
+#include "message.h"
+#include "smtp_client.h"
 #include <Poco/Util/OptionSet.h>
+#include <memory>
 
 class SmtpClientApplication : public Poco::Util::Application {
 public:
+    explicit SmtpClientApplication(const Message &message);
     ~SmtpClientApplication() override;
 
 private:
@@ -20,6 +24,10 @@ private:
     void handleHelp(const std::string &key, const std::string &value);
     void handleAddrOpt(const std::string &key, const std::string &value);
     void handlePortOpt(const std::string &key, const std::string &value);
+
+    // Variables
+    Message bindedMessage;
+    std::unique_ptr<SmtpClient> client;
 };
 
 #endif

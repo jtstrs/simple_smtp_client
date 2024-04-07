@@ -1,5 +1,6 @@
 set(src main.cpp
         message.cpp
+        smtp_client.cpp
         smtp_client_application.cpp
         smtp_protocol/data_init_state.cpp
         smtp_protocol/end_state.cpp
@@ -9,6 +10,7 @@ set(src main.cpp
         smtp_protocol/mail_from_state.cpp
         smtp_protocol/quit_state.cpp
         smtp_protocol/rcpt_to_state.cpp
+        smtp_protocol/connection_state.cpp
 )
 
 set(CMAKE_CXX_STANDARD 20)

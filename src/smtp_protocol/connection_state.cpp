@@ -7,6 +7,6 @@ ConnectionState::ConnectionState(const Poco::Net::SocketAddress &addr) : m_addr(
 }
 
 std::unique_ptr<SmtpState> ConnectionState::handleTransition(Poco::Net::StreamSocket &socket) {
-    socket.bind(m_addr);
+    socket.connect(m_addr);
     return std::make_unique<HeloState>();
 }
