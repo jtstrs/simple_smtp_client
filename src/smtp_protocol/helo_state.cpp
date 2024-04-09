@@ -1,6 +1,9 @@
 #include "helo_state.h"
 #include "../common.h"
+#include "../responses_parser.h"
 #include "error_state.h"
+#include <chrono>
+#include <thread>
 
 constexpr char const *HELO_STATE_MESSAGE = "HELO";
 
@@ -13,8 +16,9 @@ std::unique_ptr<SmtpState> HeloState::handleTransition(Poco::Net::StreamSocket &
         return std::make_unique<ErrorState>();
     }
 
+    ResponseCode responseCode = parseCode(inputBuffer);
     std::cout << "Receive buffer from server: " << inputBuffer << std::endl;
-
+    std::cout << "Response code is: " << responseCode << std::endl;
     socket.sendBytes((void *) HELO_STATE_MESSAGE, strlen(HELO_STATE_MESSAGE), 0);
     return nullptr;
 }
