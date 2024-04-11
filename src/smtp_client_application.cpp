@@ -14,7 +14,7 @@ constexpr char const *g_addr = "addr";
 constexpr char const *g_port = "port";
 constexpr char const *g_domain = "domain";
 
-SmtpClientApplication::SmtpClientApplication() : client(nullptr) {
+SmtpClientApplication::SmtpClientApplication() : m_helpRequested(false), m_client(nullptr) {
 }
 
 
@@ -27,14 +27,18 @@ void SmtpClientApplication::uninitialize() {
 }
 
 int32_t SmtpClientApplication::main(const std::vector<std::string> &args) {
+    if (m_helpRequested) {
+        return 0;
+    }
+
     const std::string address = "localhost";
     int32_t port = 5555;
 
     Message smtpMessage;
     smtpMessage.domain = config().getString(g_domain);
 
-    client = std::make_unique<SmtpClient>(address, port);
-    client->sendMessage(smtpMessage);
+    m_client = std::make_unique<SmtpClient>(address, port);
+    m_client->sendMessage(smtpMessage);
     return 0;
 }
 
@@ -68,6 +72,7 @@ void SmtpClientApplication::defineOptions(Poco::Util::OptionSet &options) {
 }
 
 void SmtpClientApplication::handleHelp(const std::string &key, const std::string &value) {
+    m_helpRequested = true;
     displayHelp();
     stopOptionsProcessing();
 }
@@ -90,7 +95,7 @@ void SmtpClientApplication::handleDomainOpt(const std::string &key, const std::s
 void SmtpClientApplication::displayHelp() {
     Poco::Util::HelpFormatter helpFormatter(options());
     helpFormatter.setCommand(commandName());
-    helpFormatter.setHeader("Simple smtp cleint applicaiton");
+    helpFormatter.setHeader("Simple smtp client applicaiton");
     helpFormatter.format(std::cout);
 }
 

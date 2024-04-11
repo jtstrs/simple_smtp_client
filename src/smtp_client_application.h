@@ -25,8 +25,10 @@ private:
     void handlePortOpt(const std::string &key, const std::string &value);
     void handleDomainOpt(const std::string &key, const std::string &value);
 
+    bool m_helpRequested;
+
     // Variables
-    std::unique_ptr<SmtpClient> client;
+    std::unique_ptr<SmtpClient> m_client;
 };
 
 #endif
