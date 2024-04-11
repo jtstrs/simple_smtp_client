@@ -24,6 +24,11 @@ std::unique_ptr<SmtpState> HeloState::handleTransition(Poco::Net::StreamSocket &
                                                         static_cast<int32_t>(ResponseCode::ServiceReady)));
     }
 
-    socket.sendBytes((void *) HELO_STATE_MESSAGE, strlen(HELO_STATE_MESSAGE), 0);
+    if (messageData.domain.empty()) {
+        return std::make_unique<ErrorState>("Provided incorrect message configuration. Domain is an empty");
+    }
+
+    std::string messageBuffer = std::move(std::format("{} {}", HELO_STATE_MESSAGE, messageData.domain));
+    socket.sendBytes(messageBuffer.c_str(), strlen(HELO_STATE_MESSAGE), 0);
     return nullptr;
 }

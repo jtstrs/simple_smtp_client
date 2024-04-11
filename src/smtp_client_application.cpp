@@ -1,4 +1,5 @@
 #include "smtp_client_application.h"
+#include "message.h"
 #include "smtp_client.h"
 #include <Poco/Util/Application.h>
 #include <Poco/Util/HelpFormatter.h>
@@ -11,9 +12,9 @@
 
 constexpr char const *g_addr = "addr";
 constexpr char const *g_port = "port";
+constexpr char const *g_domain = "domain";
 
-SmtpClientApplication::SmtpClientApplication(const Message &message) : bindedMessage(message),
-                                                                       client(nullptr) {
+SmtpClientApplication::SmtpClientApplication() : client(nullptr) {
 }
 
 
@@ -29,12 +30,16 @@ int32_t SmtpClientApplication::main(const std::vector<std::string> &args) {
     const std::string address = "localhost";
     int32_t port = 5555;
 
+    Message smtpMessage;
+    smtpMessage.domain = config().getString(g_domain);
+
     client = std::make_unique<SmtpClient>(address, port);
-    client->sendMessage(bindedMessage);
+    client->sendMessage(smtpMessage);
     return 0;
 }
 
 void SmtpClientApplication::defineOptions(Poco::Util::OptionSet &options) {
+
     Poco::Util::Application::defineOptions(options);
 
     options.addOption(
@@ -54,6 +59,12 @@ void SmtpClientApplication::defineOptions(Poco::Util::OptionSet &options) {
                     .required(false)
                     .repeatable(false)
                     .callback(Poco::Util::OptionCallback<SmtpClientApplication>(this, &SmtpClientApplication::handlePortOpt)));
+
+    options.addOption(
+            Poco::Util::Option("domain", "d", "Mail server domain")
+                    .required(true)
+                    .repeatable(false)
+                    .callback(Poco::Util::OptionCallback<SmtpClientApplication>(this, &SmtpClientApplication::handleDomainOpt)));
 }
 
 void SmtpClientApplication::handleHelp(const std::string &key, const std::string &value) {
@@ -69,6 +80,11 @@ void SmtpClientApplication::handlePortOpt(const std::string &key, const std::str
     int32_t portVal = 0;
     std::from_chars(value.c_str(), value.c_str() + value.size(), portVal);
     config().setInt32(g_port, portVal);
+}
+
+void SmtpClientApplication::handleDomainOpt(const std::string &key, const std::string &value) {
+    std::cout << "Domain opt: " << value << std::endl;
+    config().setString(g_domain, value);
 }
 
 void SmtpClientApplication::displayHelp() {

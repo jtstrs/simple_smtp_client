@@ -5,6 +5,7 @@
 #include <string>
 
 struct Message {
+    std::string domain;
     std::string from;
     std::string subject;
     std::string to;
