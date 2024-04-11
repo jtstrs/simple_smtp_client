@@ -2,8 +2,6 @@
 #include "../common.h"
 #include "../responses_parser.h"
 #include "error_state.h"
-#include <chrono>
-#include <thread>
 
 constexpr char const *HELO_STATE_MESSAGE = "HELO";
 
