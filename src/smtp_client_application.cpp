@@ -95,7 +95,7 @@ void SmtpClientApplication::handleDomainOpt(const std::string &key, const std::s
 void SmtpClientApplication::displayHelp() {
     Poco::Util::HelpFormatter helpFormatter(options());
     helpFormatter.setCommand(commandName());
-    helpFormatter.setHeader("Simple smtp client applicaiton");
+    helpFormatter.setHeader("Simple smtp client application");
     helpFormatter.format(std::cout);
 }
 
