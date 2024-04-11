@@ -5,7 +5,8 @@
 
 class MailFromState : public SmtpState {
 public:
-    std::unique_ptr<SmtpState> handleTransition(Poco::Net::StreamSocket &socket) override;
+    std::unique_ptr<SmtpState> handleTransition(Poco::Net::StreamSocket &socket,
+                                                const Message &messageData) override;
 };
 
 #endif

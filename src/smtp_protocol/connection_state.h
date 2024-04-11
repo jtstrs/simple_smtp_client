@@ -7,7 +7,8 @@
 class ConnectionState : public SmtpState {
 public:
     explicit ConnectionState(const Poco::Net::SocketAddress &addr);
-    std::unique_ptr<SmtpState> handleTransition(Poco::Net::StreamSocket &socket) override;
+    std::unique_ptr<SmtpState> handleTransition(Poco::Net::StreamSocket &socket,
+                                                const Message &messageData) override;
 
 private:
     Poco::Net::SocketAddress m_addr;

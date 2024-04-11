@@ -6,7 +6,8 @@
 
 constexpr char const *HELO_STATE_MESSAGE = "HELO";
 
-std::unique_ptr<SmtpState> HeloState::handleTransition(Poco::Net::StreamSocket &socket) {
+std::unique_ptr<SmtpState> HeloState::handleTransition(Poco::Net::StreamSocket &socket,
+                                                       const Message &messageData) {
     char inputBuffer[INPUT_BUFFER_SIZE + 1];
 
     int32_t bytesReceived = socket.receiveBytes(inputBuffer, INPUT_BUFFER_SIZE);

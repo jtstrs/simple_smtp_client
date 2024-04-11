@@ -13,6 +13,6 @@ void SmtpClient::sendMessage(const Message &message) {
     memset(inputMessageBuffer, 0, sc_maxInputBufferSize);
 
     while (m_currentState != nullptr) {
-        m_currentState = m_currentState->handleTransition(m_connectionSocket);
+        m_currentState = m_currentState->handleTransition(m_connectionSocket, message);
     }
 }
