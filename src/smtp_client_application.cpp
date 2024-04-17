@@ -8,6 +8,7 @@
 #include <charconv>
 #include <iostream>
 #include <memory>
+#include <stdexcept>
 
 
 constexpr char const *g_addr = "addr";
@@ -31,8 +32,8 @@ int32_t SmtpClientApplication::main(const std::vector<std::string> &args) {
         return 0;
     }
 
-    const std::string address = "localhost";
-    int32_t port = 5555;
+    const std::string address = config().getString(g_addr);
+    const int32_t port = config().getInt32(g_port);
 
     Message smtpMessage;
     smtpMessage.domain = config().getString(g_domain);
@@ -54,13 +55,13 @@ void SmtpClientApplication::defineOptions(Poco::Util::OptionSet &options) {
 
     options.addOption(
             Poco::Util::Option("addr", "a", "Remote host address")
-                    .required(false)
+                    .required(true)
                     .repeatable(false)
                     .callback(Poco::Util::OptionCallback<SmtpClientApplication>(this, &SmtpClientApplication::handleAddrOpt)));
 
     options.addOption(
             Poco::Util::Option("port", "p", "Remote host port")
-                    .required(false)
+                    .required(true)
                     .repeatable(false)
                     .callback(Poco::Util::OptionCallback<SmtpClientApplication>(this, &SmtpClientApplication::handlePortOpt)));
 
@@ -84,6 +85,9 @@ void SmtpClientApplication::handleAddrOpt(const std::string &key, const std::str
 void SmtpClientApplication::handlePortOpt(const std::string &key, const std::string &value) {
     int32_t portVal = 0;
     std::from_chars(value.c_str(), value.c_str() + value.size(), portVal);
+    if (portVal == 0) {
+        throw std::runtime_error("Bad port value");
+    }
     config().setInt32(g_port, portVal);
 }
 
