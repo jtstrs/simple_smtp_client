@@ -62,8 +62,9 @@ void SmtpClientApplication::defineOptions(Poco::Util::OptionSet &options) {
 
     options.addOption(
             Poco::Util::Option("addr", "a", "Remote host address")
-                    .required(false)
+                    .required(true)
                     .repeatable(false)
+                    .argument("addr", true)
                     .callback(Poco::Util::OptionCallback<SmtpClientApplication>(this, &SmtpClientApplication::handleAddrOpt)));
 
     options.addOption(
@@ -77,8 +78,9 @@ void SmtpClientApplication::defineOptions(Poco::Util::OptionSet &options) {
 
     options.addOption(
             Poco::Util::Option("domain", "d", "Mail server domain")
-                    .required(false)
+                    .required(true)
                     .repeatable(false)
+                    .argument("domain", true)
                     .callback(Poco::Util::OptionCallback<SmtpClientApplication>(this, &SmtpClientApplication::handleDomainOpt)));
 }
 
@@ -91,7 +93,6 @@ void SmtpClientApplication::handleHelp(const std::string &key, const std::string
 
 void SmtpClientApplication::handleAddrOpt(const std::string &key, const std::string &value) {
     logger().debug("Handle address option. Input arg: ", value);
-
     config().setString(g_addr, value);
 }
 
@@ -104,7 +105,6 @@ void SmtpClientApplication::handlePortOpt(const std::string &key, const std::str
 
 void SmtpClientApplication::handleDomainOpt(const std::string &key, const std::string &value) {
     logger().debug("Handle domain option. Input arg: ", value);
-
     config().setString(g_domain, value);
 }
 
