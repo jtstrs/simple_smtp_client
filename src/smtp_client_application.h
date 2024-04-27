@@ -20,6 +20,7 @@ private:
     void displayHelp();
 
     // Cli opt handlers
+    void handleLogLevel(const std::string &key, const std::string &value);
     void handleHelp(const std::string &key, const std::string &value);
     void handleAddrOpt(const std::string &key, const std::string &value);
     void handlePortOpt(const std::string &key, const std::string &value);

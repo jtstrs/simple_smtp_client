@@ -2,6 +2,7 @@
 #include "message.h"
 #include "smtp_client.h"
 #include "validators/port_option_validator.h"
+#include <Poco/Logger.h>
 #include <Poco/Util/Application.h>
 #include <Poco/Util/HelpFormatter.h>
 #include <Poco/Util/Option.h>
@@ -12,9 +13,11 @@
 #include <memory>
 
 
+constexpr char const *g_log_lvl = "log_lvl";
 constexpr char const *g_addr = "addr";
 constexpr char const *g_port = "port";
 constexpr char const *g_domain = "domain";
+constexpr int32_t defaultLogLevel = Poco::Message::Priority::PRIO_FATAL;
 
 SmtpClientApplication::SmtpClientApplication() : m_helpRequested(false), m_client(nullptr) {
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
@@ -26,12 +29,10 @@ SmtpClientApplication::SmtpClientApplication() : m_helpRequested(false), m_clien
 
 
 void SmtpClientApplication::initialize(Poco::Util::Application &self) {
-    logger().information("Application initialize");
     Poco::Util::Application::initialize(self);
 }
 
 void SmtpClientApplication::uninitialize() {
-    logger().information("Application uninitialize");
     Poco::Util::Application::uninitialize();
 }
 
@@ -39,6 +40,14 @@ int32_t SmtpClientApplication::main(const std::vector<std::string> &args) {
     if (m_helpRequested) {
         return 0;
     }
+
+    const int32_t requestedLogLevel = [&]() {
+        if (config().has(g_log_lvl)) {
+            return config().getInt32(g_log_lvl);
+        }
+        return defaultLogLevel;
+    }();
+    logger().setLevel(requestedLogLevel);
 
     const std::string address = config().getString(g_addr);
     const int32_t port = config().getInt32(g_port);
@@ -82,34 +91,46 @@ void SmtpClientApplication::defineOptions(Poco::Util::OptionSet &options) {
                     .repeatable(false)
                     .argument("domain", true)
                     .callback(Poco::Util::OptionCallback<SmtpClientApplication>(this, &SmtpClientApplication::handleDomainOpt)));
+
+    options.addOption(
+            Poco::Util::Option("l_level", "l", "Log level")
+                    .required(false)
+                    .repeatable(false)
+                    .argument("l_level", true)
+                    .callback(Poco::Util::OptionCallback<SmtpClientApplication>(this, &SmtpClientApplication::handleLogLevel)));
+}
+
+void SmtpClientApplication::handleLogLevel(const std::string &key, const std::string &value) {
+    int32_t parsedLevel = defaultLogLevel;
+    if (!value.empty()) {
+        std::from_chars(value.c_str(), value.c_str() + value.size(), parsedLevel);
+        config().setInt32(g_log_lvl, parsedLevel);
+    } else {
+        config().setInt32(g_log_lvl, defaultLogLevel);
+    }
 }
 
 void SmtpClientApplication::handleHelp(const std::string &key, const std::string &value) {
     m_helpRequested = true;
-    logger().debug("Handle help");
     displayHelp();
     stopOptionsProcessing();
 }
 
 void SmtpClientApplication::handleAddrOpt(const std::string &key, const std::string &value) {
-    logger().debug("Handle address option. Input arg: ", value);
     config().setString(g_addr, value);
 }
 
 void SmtpClientApplication::handlePortOpt(const std::string &key, const std::string &value) {
-    logger().debug("Handle port option. Input arg", value);
     int32_t parsedPort = 0;
     std::from_chars(value.c_str(), value.c_str() + value.size(), parsedPort);
     config().setInt32(g_port, parsedPort);
 }
 
 void SmtpClientApplication::handleDomainOpt(const std::string &key, const std::string &value) {
-    logger().debug("Handle domain option. Input arg: ", value);
     config().setString(g_domain, value);
 }
 
 void SmtpClientApplication::displayHelp() {
-
     Poco::Util::HelpFormatter helpFormatter(options());
     helpFormatter.setCommand(commandName());
     helpFormatter.setHeader("Simple smtp client application");
