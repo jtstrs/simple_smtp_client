@@ -2,6 +2,7 @@
 #define CONNECTION_STATE
 
 #include "smtp_state.h"
+#include <Poco/Logger.h>
 #include <Poco/Net/SocketAddress.h>
 
 class ConnectionState : public SmtpState {
@@ -11,6 +12,7 @@ public:
                                                 const Message &messageData) override;
 
 private:
+    Poco::Logger &m_logger;
     Poco::Net::SocketAddress m_addr;
 };
 
