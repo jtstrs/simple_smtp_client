@@ -2,6 +2,7 @@
 #include "../common.h"
 #include "../responses_parser.h"
 #include "error_state.h"
+#include "mail_from_state.h"
 #include <Poco/Logger.h>
 #include <memory>
 
@@ -18,12 +19,13 @@ std::unique_ptr<SmtpState> HeloState::handleTransition(Poco::Net::StreamSocket &
     memset(inputBuffer, 0, sizeof(inputBuffer));
 
     int32_t bytesReceived = socket.receiveBytes(inputBuffer, INPUT_BUFFER_SIZE);
-    m_logger.information("Receive message: %s", std::string(inputBuffer));
-    m_logger.information("Accepted bytes: %d", bytesReceived);
 
     if (bytesReceived == 0) {
         return std::make_unique<ErrorState>("No additional lines from server");
     }
+
+    m_logger.information("Receive message: %s", std::string(inputBuffer));
+    m_logger.information("Accepted bytes: %d", bytesReceived);
 
     ResponseCode responseCode = parseCode(inputBuffer);
     m_logger.information("Server response code: %d", static_cast<int32_t>(responseCode));
@@ -44,5 +46,5 @@ std::unique_ptr<SmtpState> HeloState::handleTransition(Poco::Net::StreamSocket &
     m_logger.information("OK. Move to MAIL FROM STATE. Send message to server: %s",
                          messageBuffer);
     socket.sendBytes(messageBuffer.c_str(), messageBuffer.size(), 0);
-    return nullptr;
+    return std::make_unique<MailFromState>();
 }
