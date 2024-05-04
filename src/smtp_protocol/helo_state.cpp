@@ -1,20 +1,22 @@
 #include "helo_state.h"
 #include "../common.h"
+#include "../logger_wrapper.h"
 #include "../responses_parser.h"
 #include "error_state.h"
 #include "mail_from_state.h"
-#include <Poco/Logger.h>
 #include <memory>
 
 #define LOG_MODULE "HELO STATE"
 
-constexpr char const *HELO_STATE_MESSAGE = "HELO";
 
-HeloState::HeloState() : m_logger(Poco::Logger::get(LOG_MODULE)) {
+HeloState::HeloState() {
+    LOG_FUNC;
 }
 
 std::unique_ptr<SmtpState> HeloState::handleTransition(Poco::Net::StreamSocket &socket,
                                                        const Message &messageData) {
+    LOG_FUNC
+
     char inputBuffer[INPUT_BUFFER_SIZE + 1];
     memset(inputBuffer, 0, sizeof(inputBuffer));
 
@@ -24,27 +26,28 @@ std::unique_ptr<SmtpState> HeloState::handleTransition(Poco::Net::StreamSocket &
         return std::make_unique<ErrorState>("No additional lines from server");
     }
 
-    m_logger.information("Receive message: %s", std::string(inputBuffer));
-    m_logger.information("Accepted bytes: %d", bytesReceived);
+    LOG_FMT_MESSAGE("Receive message: %s", std::string(inputBuffer))
+    LOG_FMT_MESSAGE("Accepted bytes: %d", bytesReceived)
 
     ResponseCode responseCode = parseCode(inputBuffer);
-    m_logger.information("Server response code: %d", static_cast<int32_t>(responseCode));
+
+    LOG_FMT_MESSAGE("Server response code: %d", static_cast<int32_t>(responseCode))
 
     if (responseCode != ResponseCode::ServiceReady) {
-        m_logger.information("Bad response code. Move to error state");
+        LOG_MESSAGE("Bad response code")
         return std::make_unique<ErrorState>(std::format("Received incorrect response code: {}. Expected: {}\n",
                                                         static_cast<int32_t>(responseCode),
                                                         static_cast<int32_t>(ResponseCode::ServiceReady)));
     }
 
     if (messageData.domain.empty()) {
-        m_logger.information("Provided domain is an empty. Move to error state.");
+        LOG_MESSAGE("Provided domain is an empty");
         return std::make_unique<ErrorState>("Provided incorrect message configuration. Domain is an empty");
     }
 
+    constexpr char const *HELO_STATE_MESSAGE = "HELO";
     const std::string messageBuffer = std::move(std::format("{} {}\r\n", HELO_STATE_MESSAGE, messageData.domain));
-    m_logger.information("OK. Move to MAIL FROM STATE. Send message to server: %s",
-                         messageBuffer);
+    LOG_FMT_MESSAGE("Send message to server: %s", messageBuffer)
     socket.sendBytes(messageBuffer.c_str(), messageBuffer.size(), 0);
     return std::make_unique<MailFromState>();
 }

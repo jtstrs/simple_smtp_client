@@ -1,18 +1,20 @@
 #include "mail_from_state.h"
 #include "../common.h"
+#include "../logger_wrapper.h"
 #include "../responses_parser.h"
 #include "error_state.h"
 #include "rcpt_to_state.h"
-#include <Poco/Logger.h>
 #include <memory>
 
 #define LOG_MODULE "MAIL FROM STATE"
 
-MailFromState::MailFromState() : m_logger(Poco::Logger::get(LOG_MODULE)) {
+MailFromState::MailFromState() {
+    LOG_FUNC;
 }
 
 std::unique_ptr<SmtpState> MailFromState::handleTransition(Poco::Net::StreamSocket &socket,
                                                            const Message &messageData) {
+    LOG_FUNC
     char inputBuffer[INPUT_BUFFER_SIZE + 1];
     memset(inputBuffer, 0, sizeof(inputBuffer));
 
@@ -21,8 +23,8 @@ std::unique_ptr<SmtpState> MailFromState::handleTransition(Poco::Net::StreamSock
     if (receivedBytes == 0) {
         return std::make_unique<ErrorState>("Cant receive message from the server");
     }
-    m_logger.information("Received message: %s", std::string(inputBuffer));
-    m_logger.information("Accepted bytes: %d.", receivedBytes);
+    LOG_FMT_MESSAGE("Received message: %s", std::string(inputBuffer))
+    LOG_FMT_MESSAGE("Accepted bytes: %d.", receivedBytes)
 
     ResponseCode responseCode = parseCode(inputBuffer);
 
@@ -35,5 +37,6 @@ std::unique_ptr<SmtpState> MailFromState::handleTransition(Poco::Net::StreamSock
                                                           MAIL_FROM_STATE_MESSAGE,
                                                           messageData.from);
     socket.sendBytes(mailFromMessageBuffer.c_str(), mailFromMessageBuffer.size(), 0);
+    LOG_FMT_MESSAGE("Send message to %s to server.", mailFromMessageBuffer)
     return std::make_unique<RcptToState>();
 }

@@ -2,7 +2,6 @@
 #define ERROR_STATE
 
 #include "smtp_state.h"
-#include <Poco/Logger.h>
 
 class ErrorState : public SmtpState {
 public:
@@ -11,7 +10,6 @@ public:
                                                 const Message &messageData) override;
 
 private:
-    Poco::Logger &m_logger;
     std::string m_errorReason;
 };
 

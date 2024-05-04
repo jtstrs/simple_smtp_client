@@ -1,18 +1,21 @@
 #include "rcpt_to_state.h"
 #include "../common.h"
+#include "../logger_wrapper.h"
 #include "../responses_parser.h"
 #include "error_state.h"
 #include "fill_data_state.h"
-#include <Poco/Logger.h>
 #include <memory>
 
 #define LOG_MODULE "RCPT TO STATE"
 
-RcptToState::RcptToState() : m_logger(Poco::Logger::get(LOG_MODULE)) {
+RcptToState::RcptToState() {
+    LOG_FUNC;
 }
 
 std::unique_ptr<SmtpState> RcptToState::handleTransition(Poco::Net::StreamSocket &socket,
                                                          const Message &messageData) {
+    LOG_FUNC
+
     char inputBuffer[INPUT_BUFFER_SIZE + 1];
     memset(inputBuffer, 0, sizeof(inputBuffer));
     const int32_t receivedBytes = socket.receiveBytes(inputBuffer, sizeof(inputBuffer), 0);
@@ -21,8 +24,8 @@ std::unique_ptr<SmtpState> RcptToState::handleTransition(Poco::Net::StreamSocket
         return std::make_unique<ErrorState>("Cant receive message from server. Move to error state");
     }
 
-    m_logger.information("Received message: %s", std::string(inputBuffer));
-    m_logger.information("Accepted bytes: %d", receivedBytes);
+    LOG_FMT_MESSAGE("Received message: %s", std::string(inputBuffer))
+    LOG_FMT_MESSAGE("Accepted bytes: %d", receivedBytes)
 
     ResponseCode responseCode = parseCode(inputBuffer);
 
