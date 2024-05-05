@@ -1,4 +1,5 @@
 #include "message.h"
+#include <ostream>
 #include <sstream>
 #include <string>
 
@@ -18,4 +19,18 @@ Message Message::parse_message(std::istream &source) {
     out.body = body_builder.str();
 
     return out;
+}
+
+std::string Message::toString() const {
+    std::stringstream messageSerializer;
+    dump(messageSerializer);
+    return messageSerializer.str();
+}
+
+void Message::dump(std::ostream &os) const {
+    os << "Server domain: " << domain << "\n"
+       << "From: " << from << "\n"
+       << "To: " << to << "\n"
+       << "Subject: " << subject << "\n"
+       << "Body: " << body << "\n";
 }
