@@ -11,7 +11,7 @@ enum ResponseCode : int32_t {
     ServiceReady = 220,
     ServiceClosing = 221,
     ActionCompleted = 250,
-    StartMessageInpuit = 354,
+    StartMessageInput = 354,
     ServiceNotAvailable = 421,
     UserMailboxUnavailableTryLater = 450,
     ServerError = 451,
