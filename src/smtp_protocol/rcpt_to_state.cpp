@@ -34,7 +34,7 @@ std::unique_ptr<SmtpState> RcptToState::handleTransition(Poco::Net::StreamSocket
     }
 
     constexpr char const *RCPT_TO_STATE_MSG = "RCPT TO";
-    const std::string rcptToMessageBuffer = std::move(std::format("{}: <{}>", RCPT_TO_STATE_MSG, messageData.to));
+    const std::string rcptToMessageBuffer = std::move(std::format("{}: <{}>\r\n", RCPT_TO_STATE_MSG, messageData.to));
     socket.sendBytes(rcptToMessageBuffer.c_str(), rcptToMessageBuffer.size(), 0);
     LOG_FMT_MESSAGE("Send message %s to server", rcptToMessageBuffer)
 
