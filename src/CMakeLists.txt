@@ -2,9 +2,8 @@ set(src main.cpp
         message.cpp
         smtp_client.cpp
         smtp_client_application.cpp
-
+        validators/file_exists_validator.cpp
         validators/port_option_validator.cpp
-
         smtp_protocol/data_init_state.cpp
         smtp_protocol/end_state.cpp
         smtp_protocol/error_state.cpp

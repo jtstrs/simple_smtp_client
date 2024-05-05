@@ -1,6 +1,8 @@
 #include "smtp_client_application.h"
+#include "logger_wrapper.h"
 #include "message.h"
 #include "smtp_client.h"
+#include "validators/file_exists_validator.h"
 #include "validators/port_option_validator.h"
 #include <Poco/Logger.h>
 #include <Poco/Util/Application.h>
@@ -9,14 +11,20 @@
 #include <Poco/Util/OptionCallback.h>
 #include <Poco/Util/OptionSet.h>
 #include <bits/getopt_core.h>
+#include <filesystem>
+#include <fstream>
+#include <ios>
 #include <iostream>
 #include <memory>
+#include <stdexcept>
 
+#define LOG_MODULE "SMTP CLIENT APPLICATION"
 
 constexpr char const *g_log_lvl = "log_lvl";
 constexpr char const *g_addr = "addr";
 constexpr char const *g_port = "port";
 constexpr char const *g_domain = "domain";
+constexpr char const *g_msg_file = "msg_file";
 constexpr int32_t defaultLogLevel = Poco::Message::Priority::PRIO_FATAL;
 
 SmtpClientApplication::SmtpClientApplication() : m_helpRequested(false), m_client(nullptr) {
@@ -49,12 +57,19 @@ int32_t SmtpClientApplication::main(const std::vector<std::string> &args) {
     }();
     logger().setLevel(requestedLogLevel);
 
+    Message smtpMessage;
+    if (config().has(g_msg_file)) {
+        std::fstream messageSource(config().getString(g_msg_file), std::ios_base::in);
+        smtpMessage = Message::parse_message(messageSource);
+    } else {
+        throw std::runtime_error("Manual input not implemented yet. Please provide the file");
+    }
+
     const std::string address = config().getString(g_addr);
     const int32_t port = config().getInt32(g_port);
-
-    Message smtpMessage;
     smtpMessage.domain = config().getString(g_domain);
 
+    LOG_FMT_MESSAGE("Created message to send:\n%s", smtpMessage.toString());
     m_client = std::make_unique<SmtpClient>(address, port);
     m_client->sendMessage(smtpMessage);
     return 0;
@@ -98,6 +113,14 @@ void SmtpClientApplication::defineOptions(Poco::Util::OptionSet &options) {
                     .repeatable(false)
                     .argument("l_level", true)
                     .callback(Poco::Util::OptionCallback<SmtpClientApplication>(this, &SmtpClientApplication::handleLogLevel)));
+
+    options.addOption(
+            Poco::Util::Option("msg_file", "f", "File which contains smtp message data")
+                    .required(false)
+                    .repeatable(false)
+                    .validator(new FileExistsValidator)
+                    .argument("msg_file", true)
+                    .callback(Poco::Util::OptionCallback<SmtpClientApplication>(this, &SmtpClientApplication::handleMessageFileOpt)));
 }
 
 void SmtpClientApplication::handleLogLevel(const std::string &key, const std::string &value) {
@@ -128,6 +151,10 @@ void SmtpClientApplication::handlePortOpt(const std::string &key, const std::str
 
 void SmtpClientApplication::handleDomainOpt(const std::string &key, const std::string &value) {
     config().setString(g_domain, value);
+}
+
+void SmtpClientApplication::handleMessageFileOpt(const std::string &key, const std::string &value) {
+    config().setString(g_msg_file, value);
 }
 
 void SmtpClientApplication::displayHelp() {

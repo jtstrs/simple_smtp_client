@@ -25,6 +25,7 @@ private:
     void handleAddrOpt(const std::string &key, const std::string &value);
     void handlePortOpt(const std::string &key, const std::string &value);
     void handleDomainOpt(const std::string &key, const std::string &value);
+    void handleMessageFileOpt(const std::string &key, const std::string &value);
 
     bool m_helpRequested;
 
