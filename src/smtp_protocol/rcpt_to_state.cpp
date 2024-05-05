@@ -1,9 +1,8 @@
 #include "rcpt_to_state.h"
-#include "../common.h"
 #include "../logger_wrapper.h"
 #include "../responses_parser.h"
+#include "data_init_state.h"
 #include "error_state.h"
-#include "fill_data_state.h"
 #include <memory>
 
 #define LOG_MODULE "RCPT TO STATE"
@@ -23,5 +22,5 @@ std::unique_ptr<SmtpState> RcptToState::handleTransition(Poco::Net::StreamSocket
         return std::make_unique<ErrorState>("rcpt to state handling error");
     }
 
-    return std::make_unique<FillDataState>();
+    return std::make_unique<DataInitState>();
 }
