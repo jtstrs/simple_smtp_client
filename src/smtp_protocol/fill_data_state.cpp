@@ -1,6 +1,7 @@
 #include "fill_data_state.h"
 #include "../logger_wrapper.h"
 #include "error_state.h"
+#include "quit_state.h"
 
 #define LOG_MODULE "FILL DATA STATE"
 
@@ -31,5 +32,5 @@ std::unique_ptr<SmtpState> FillDataState::handleTransition(Poco::Net::StreamSock
         return std::make_unique<ErrorState>(status);
     }
 
-    return nullptr;
+    return std::make_unique<QuitState>();
 }
