@@ -6,16 +6,23 @@
 #include <Poco/Net/StreamSocket.h>
 #include <memory>
 
+enum class StateHandlingStatus {
+    Ok,
+    ResponseEmpty,
+    ResponseBad
+};
+
+std::string handlingStatusToString(StateHandlingStatus status);
+
 class SmtpState {
 public:
     virtual std::unique_ptr<SmtpState> handleTransition(Poco::Net::StreamSocket &socket,
                                                         const Message &messageData) = 0;
 
 protected:
-    bool baseStateHandler(Poco::Net::StreamSocket &socket,
-                          const std::string &stateCaption,
-                          const std::string &stateValue,
-                          ResponseCode expectedCode);
+    StateHandlingStatus baseStateHandler(Poco::Net::StreamSocket &socket,
+                                         const std::string &messageBody,
+                                         ResponseCode expectedCode);
 };
 
 #endif

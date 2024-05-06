@@ -5,12 +5,12 @@
 
 class ErrorState : public SmtpState {
 public:
-    explicit ErrorState(const std::string &errorReason);
+    explicit ErrorState(StateHandlingStatus reasonCode);
     std::unique_ptr<SmtpState> handleTransition(Poco::Net::StreamSocket &socket,
                                                 const Message &messageData) override;
 
 private:
-    std::string m_errorReason;
+    StateHandlingStatus m_errorCode;
 };
 
 #endif

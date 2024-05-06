@@ -3,6 +3,7 @@
 #include "../responses_parser.h"
 #include "data_init_state.h"
 #include "error_state.h"
+#include "smtp_state.h"
 #include <memory>
 
 #define LOG_MODULE "RCPT TO STATE"
@@ -16,10 +17,15 @@ std::unique_ptr<SmtpState> RcptToState::handleTransition(Poco::Net::StreamSocket
     LOG_FUNC
 
     constexpr char const *RCPT_TO_STATE_MSG = "RCPT TO";
-    const bool handlingStatus = baseStateHandler(socket, RCPT_TO_STATE_MSG, messageData.to, ResponseCode::ActionCompleted);
+    std::stringstream rcptToMessageBuilder;
+    rcptToMessageBuilder << RCPT_TO_STATE_MSG << ":"
+                         << "<" << messageData.to << ">";
+    const auto status = baseStateHandler(socket,
+                                         rcptToMessageBuilder.str(),
+                                         ResponseCode::ActionCompleted);
 
-    if (!handlingStatus) {
-        return std::make_unique<ErrorState>("rcpt to state handling error");
+    if (status != StateHandlingStatus::Ok) {
+        return std::make_unique<ErrorState>(status);
     }
 
     return std::make_unique<DataInitState>();

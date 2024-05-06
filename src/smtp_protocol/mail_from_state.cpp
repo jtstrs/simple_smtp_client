@@ -3,7 +3,9 @@
 #include "../responses_parser.h"
 #include "error_state.h"
 #include "rcpt_to_state.h"
+#include "smtp_state.h"
 #include <memory>
+#include <sstream>
 
 #define LOG_MODULE "MAIL FROM STATE"
 
@@ -16,10 +18,15 @@ std::unique_ptr<SmtpState> MailFromState::handleTransition(Poco::Net::StreamSock
     LOG_FUNC
 
     constexpr char const *MAIL_FROM_STATE_MESSAGE = "MAIL FROM";
-    const bool handlingStatus = baseStateHandler(socket, MAIL_FROM_STATE_MESSAGE, messageData.from, ResponseCode::ActionCompleted);
+    std::stringstream mailFromMessageBuilder;
+    mailFromMessageBuilder << MAIL_FROM_STATE_MESSAGE << ":"
+                           << "<" << messageData.from << ">";
+    const auto status = baseStateHandler(socket,
+                                         mailFromMessageBuilder.str(),
+                                         ResponseCode::ActionCompleted);
 
-    if (!handlingStatus) {
-        return std::make_unique<ErrorState>("Mail from state handling error");
+    if (status != StateHandlingStatus::Ok) {
+        return std::make_unique<ErrorState>(status);
     }
 
     return std::make_unique<RcptToState>();
