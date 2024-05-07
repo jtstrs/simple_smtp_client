@@ -5,6 +5,7 @@
 #include "error_state.h"
 #include "smtp_state.h"
 #include <memory>
+#include <sstream>
 
 #define LOG_MODULE "RCPT TO STATE"
 
@@ -18,15 +19,23 @@ std::unique_ptr<SmtpState> RcptToState::handleTransition(Poco::Net::StreamSocket
 
     constexpr char const *RCPT_TO_STATE_MSG = "RCPT TO";
     std::stringstream rcptToMessageBuilder;
-    rcptToMessageBuilder << RCPT_TO_STATE_MSG << ":"
-                         << "<" << messageData.to << ">";
-    const auto status = baseStateHandler(socket,
-                                         rcptToMessageBuilder.str(),
-                                         ResponseCode::ActionCompleted);
 
-    if (status != StateHandlingStatus::Ok) {
-        return std::make_unique<ErrorState>(status);
+    const int32_t addressesCount = messageData.destinationAddresses.size();
+    for (int32_t i = 0; i < addressesCount; ++i) {
+        rcptToMessageBuilder << RCPT_TO_STATE_MSG << ":"
+                             << "<" << messageData.destinationAddresses.at(i) << ">";
+
+        const auto status = baseStateHandler(socket,
+                                             rcptToMessageBuilder.str(),
+                                             ResponseCode::ActionCompleted);
+
+        if (status != StateHandlingStatus::Ok) {
+            return std::make_unique<ErrorState>(status);
+        }
+
+        std::stringstream().swap(rcptToMessageBuilder);
     }
+
 
     return std::make_unique<DataInitState>();
 }

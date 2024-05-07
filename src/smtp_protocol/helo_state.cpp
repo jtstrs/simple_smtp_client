@@ -21,7 +21,7 @@ std::unique_ptr<SmtpState> HeloState::handleTransition(Poco::Net::StreamSocket &
 
     constexpr char const *HELO_STATE_MESSAGE = "HELO";
     std::stringstream heloMessageBuilder;
-    heloMessageBuilder << HELO_STATE_MESSAGE << " " << messageData.domain;
+    heloMessageBuilder << HELO_STATE_MESSAGE << " " << messageData.fromDomain;
 
     const auto status = baseStateHandler(socket,
                                          heloMessageBuilder.str(),

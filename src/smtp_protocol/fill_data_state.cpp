@@ -13,8 +13,9 @@ std::unique_ptr<SmtpState> FillDataState::handleTransition(Poco::Net::StreamSock
     fillDataMessageBuilder << "Subject: " << messageData.subject
                            << "\r\n";
 
-    std::stringstream mailBodyStream(messageData.body);
+    std::stringstream mailBodyStream(messageData.messageBody);
 
+    std::cout << "BODY: " << messageData.messageBody << std::endl;
     while (!mailBodyStream.eof()) {
         std::string temp;
         std::getline(mailBodyStream, temp);

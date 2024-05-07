@@ -37,8 +37,10 @@ template<typename... Args>
 void logMessage(const std::string &module,
                 const std::string &function,
                 const std::string &msg,
+                int32_t line,
                 Args... args) {
-    std::string messageFormat = std::format("[{}][{}] {}", module, function, msg);
+    std::string messageFormat = std::format("[Line: {}][{}][{}] {}", line,
+                                            module, function, msg);
     if constexpr (sizeof...(Args) <= 0) {
         getGlobalLogger().information(messageFormat);
         return;
@@ -46,8 +48,8 @@ void logMessage(const std::string &module,
     getGlobalLogger().information(messageFormat, args...);
 }
 
-#define LOG_MESSAGE(msg) logMessage(LOG_MODULE, __FUNCTION__, msg);
-#define LOG_FMT_MESSAGE(fmt, args...) logMessage(LOG_MODULE, __FUNCTION__, fmt, args);
+#define LOG_MESSAGE(msg) logMessage(LOG_MODULE, __FUNCTION__, msg, __LINE__);
+#define LOG_FMT_MESSAGE(fmt, args...) logMessage(LOG_MODULE, __FUNCTION__, fmt, __LINE__, args);
 
 
 #endif

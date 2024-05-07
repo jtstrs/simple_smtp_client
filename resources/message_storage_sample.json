@@ -1,12 +1,12 @@
 {
     "domain": "DOMAIN",
     "mail_from": "MAIL_FROM",
-    "destionation_addresses": [
+    "destination_addresses": [
         "rcpt1",
         "rcpt2",
         "rcpt3",
         "rcptn"
     ],
     "message_subject": "Subject",
-    "message_content": ""
+    "message_content": "Kekestan\nKekestan\nKekestan\n"
 }

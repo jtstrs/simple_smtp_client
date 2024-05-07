@@ -20,7 +20,7 @@ std::unique_ptr<SmtpState> MailFromState::handleTransition(Poco::Net::StreamSock
     constexpr char const *MAIL_FROM_STATE_MESSAGE = "MAIL FROM";
     std::stringstream mailFromMessageBuilder;
     mailFromMessageBuilder << MAIL_FROM_STATE_MESSAGE << ":"
-                           << "<" << messageData.from << ">";
+                           << "<" << messageData.fromAddress << ">";
     const auto status = baseStateHandler(socket,
                                          mailFromMessageBuilder.str(),
                                          ResponseCode::ActionCompleted);

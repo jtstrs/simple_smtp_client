@@ -4,13 +4,15 @@
 #include <istream>
 #include <ostream>
 #include <string>
+#include <vector>
 
 struct Message {
-    std::string domain;
-    std::string from;
+    // This field mostly ignor in modern SMTP servers
+    std::string fromDomain;
+    std::string fromAddress;
     std::string subject;
-    std::string to;
-    std::string body;
+    std::vector<std::string> destinationAddresses;
+    std::string messageBody;
 
     static Message parse_message(std::istream &source);
 

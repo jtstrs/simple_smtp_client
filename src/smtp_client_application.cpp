@@ -23,7 +23,6 @@
 constexpr char const *g_log_lvl = "log_lvl";
 constexpr char const *g_addr = "addr";
 constexpr char const *g_port = "port";
-constexpr char const *g_domain = "domain";
 constexpr char const *g_msg_file = "msg_file";
 constexpr int32_t defaultLogLevel = Poco::Message::Priority::PRIO_FATAL;
 
@@ -67,7 +66,6 @@ int32_t SmtpClientApplication::main(const std::vector<std::string> &args) {
 
     const std::string address = config().getString(g_addr);
     const int32_t port = config().getInt32(g_port);
-    smtpMessage.domain = config().getString(g_domain);
 
     LOG_FMT_MESSAGE("Created message to send:\n%s", smtpMessage.toString());
     m_client = std::make_unique<SmtpClient>(address, port);
@@ -99,13 +97,6 @@ void SmtpClientApplication::defineOptions(Poco::Util::OptionSet &options) {
                     .validator(new PortOptionValidator)
                     .argument("port", true)
                     .callback(Poco::Util::OptionCallback<SmtpClientApplication>(this, &SmtpClientApplication::handlePortOpt)));
-
-    options.addOption(
-            Poco::Util::Option("domain", "d", "Mail server domain")
-                    .required(true)
-                    .repeatable(false)
-                    .argument("domain", true)
-                    .callback(Poco::Util::OptionCallback<SmtpClientApplication>(this, &SmtpClientApplication::handleDomainOpt)));
 
     options.addOption(
             Poco::Util::Option("l_level", "l", "Log level")
@@ -147,10 +138,6 @@ void SmtpClientApplication::handlePortOpt(const std::string &key, const std::str
     int32_t parsedPort = 0;
     std::from_chars(value.c_str(), value.c_str() + value.size(), parsedPort);
     config().setInt32(g_port, parsedPort);
-}
-
-void SmtpClientApplication::handleDomainOpt(const std::string &key, const std::string &value) {
-    config().setString(g_domain, value);
 }
 
 void SmtpClientApplication::handleMessageFileOpt(const std::string &key, const std::string &value) {
